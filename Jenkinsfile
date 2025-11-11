@@ -77,6 +77,17 @@ pipeline {
             }
         }
         // Prodction stages
+        stage('To Build Jar file'){
+            when {
+                allOf {
+                    expression { params.DEPLOY_ENV == 'prod' }
+                    expression { params.ACTION == 'deploy' }
+                }
+            }
+            steps{
+                sh 'mvn clean package -Dskiptests'
+            }
+        }
         stage('Build the Docker images') {
             when{
                 allOf {
@@ -115,6 +126,7 @@ pipeline {
                 echo "Pushing Docker image to DockerHub..."
                 sh '''
                     sudo docker push ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}:latest
+                    sudo docker rmi ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}:latest || true
                 '''
             }
         }
@@ -123,7 +135,7 @@ pipeline {
             when {
                 allOf {
                     expression { params.DEPLOY_ENV == 'prod' }
-                    expression { params.ACTION == 'deploy' }
+                    expression { params.ACTION == 'remove' }
                 }
             }
             steps {
