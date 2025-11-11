@@ -17,7 +17,7 @@ pipeline {
     }
 
     stages {
-        stage('To Build Jar file'){
+        stage('To Build the Jar file for DEV'){
             when {
                 allOf {
                     expression { params.DEPLOY_ENV == 'dev' }
@@ -77,7 +77,7 @@ pipeline {
             }
         }
         // Prodction stages
-        stage('To Build Jar file'){
+        stage('To Build the Jar file for PROD'){
             when {
                 allOf {
                     expression { params.DEPLOY_ENV == 'prod' }
