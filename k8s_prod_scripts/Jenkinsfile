@@ -11,6 +11,7 @@ pipeline {
         NODE_PORT = '30088'
         DB_PASSWORD = '1234'
         DB_NAME_MYSQL = 'myapplication'
+        KUBE_PROJECT_DIR = 'k8s_prod_scripts'
         //  Kubeconfig path directly on Jenkins server
         KUBECONFIG = '/home/jenkins/kubeconfig_for_jenkins/kubeconfig.yaml'
     }
@@ -39,7 +40,7 @@ pipeline {
             steps {
                 sh '''
                     if ! kubectl get namespace $K8S_NAMESPACE >/dev/null 2>&1; then
-                        kubectl apply -f k8s/namespace.yml
+                        kubectl apply -f $KUBE_PROJECT_DIR/namespace.yml
                         echo "Namespace created."
                     else
                         echo "Namespace already exists, skipping..."
@@ -53,7 +54,7 @@ pipeline {
                 expression { params.ACTION == 'deploy' }
             }
             steps {
-                sh 'kubectl apply -f k8s/db_deploy_svc.yml -n $K8S_NAMESPACE'
+                sh 'kubectl apply -f $KUBE_PROJECT_DIR/db_deploy_svc.yml -n $K8S_NAMESPACE'
             }
         }
 
@@ -80,7 +81,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'kubectl apply -f k8s/app_deploy_svc.yml -n $K8S_NAMESPACE'
+                sh 'kubectl apply -f $KUBE_PROJECT_DIR/app_deploy_svc.yml -n $K8S_NAMESPACE'
             }
         }
 
@@ -101,7 +102,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'kubectl delete -f k8s/app_deploy_svc.yml -n $K8S_NAMESPACE || true'
+                sh 'kubectl delete -f $KUBE_PROJECT_DIR/app_deploy_svc.yml -n $K8S_NAMESPACE || true'
             }
         }
 
@@ -110,7 +111,7 @@ pipeline {
                 expression { params.ACTION == 'remove' }
             }
             steps {
-                sh 'kubectl delete -f k8s/db_deploy_svc.yml -n $K8S_NAMESPACE || true'
+                sh 'kubectl delete -f $KUBE_PROJECT_DIR/db_deploy_svc.yml -n $K8S_NAMESPACE || true'
             }
         }
 
@@ -119,7 +120,7 @@ pipeline {
                 expression { params.ACTION == 'remove' }
             }
             steps {
-                sh 'kubectl delete -f k8s/namespace.yml || true'
+                sh 'kubectl delete -f $KUBE_PROJECT_DIR/namespace.yml || true'
             }
         }
 
