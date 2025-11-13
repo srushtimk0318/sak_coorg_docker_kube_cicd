@@ -11,7 +11,7 @@ pipeline {
     }
 
     environment {
-        DOCKERHUB_USERNAME = 'sakit333'
+        DOCKERHUB_USERNAME = 'srushtimk0318'
         DOCKER_IMAGE = "${env.JOB_NAME}"
         DOCKER_COMPOSE_FILE = "docker-compose.yml"
     }
